@@ -14,19 +14,19 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const MyHomePage(),
+      home: const BrandPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class BrandPage extends StatefulWidget {
+  const BrandPage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<BrandPage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<BrandPage> {
   final List<Map<String, dynamic>> products = [
     {'name': 'meat', 'weight': '1Kg', 'price': 5},
     {'name': 'meat', 'weight': '1Kg', 'price': 5},
@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         child: const Icon(Icons.shopping_cart),
       ),*/
-      bottomNavigationBar: BottomNavigationBar(
+      /* bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -115,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           // Add other navigation items here
         ],
-      ),
+      ),*/
     );
   }
 }

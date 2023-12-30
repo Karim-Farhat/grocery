@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grocery2/pages/home.dart';
+import 'package:grocery2/pages/test6.dart';
 
 class LocationPage extends StatelessWidget {
   const LocationPage({super.key});
@@ -98,10 +98,11 @@ class LocationPage extends StatelessWidget {
                           50) // double.infinity is the width and 50 is the height
                       ),
                   onPressed: () {
+                    print('dcjndsjcnjskdc');
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const HomePage()));
+                            builder: (context) => const Navigator1()));
                     // handle login logic
                   },
                   child: const Text('Submit'),

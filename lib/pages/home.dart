@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:grocery2/pages/brand.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
@@ -34,13 +37,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0; // Default index of first screen
+  //int _selectedIndex = 1; // Default index of first screen
 
-  void _onItemTapped(int index) {
+  /* void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+    _selectedIndex = index;
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -179,8 +182,13 @@ class _HomePageState extends State<HomePage> {
                 children: <Widget>[
                   _buildCategoryItem(
                       'Fruits', 'assets/images/marai.png', () {}),
-                  _buildCategoryItem(
-                      'Vegetables', 'assets/images/meat.png', () {}),
+                  _buildCategoryItem('Vegetables', 'assets/images/meat.png',
+                      () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const BrandPage()));
+                  }),
                   _buildCategoryItem('Bread', 'assets/images/meat.png', () {}),
                   _buildCategoryItem('Fruits', 'assets/images/meat.png', () {}),
                   _buildCategoryItem('Fruits', 'assets/images/meat.png', () {}),
@@ -253,36 +261,6 @@ class _HomePageState extends State<HomePage> {
             // Add your best selling products ListView here
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home,
-                color: _selectedIndex == 0 ? Colors.black : Colors.grey),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search,
-                color: _selectedIndex == 1 ? Colors.black : Colors.grey),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person,
-                color: _selectedIndex == 2 ? Colors.black : Colors.grey),
-            label: 'Profile',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart,
-                color: Colors.green), // This icon will always be green
-            label: 'Cart',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        unselectedItemColor: Colors.grey,
-        selectedItemColor: Colors.black,
       ),
     );
   }
@@ -380,5 +358,27 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  @override
+  void initstate() {
+    get_products();
+  }
+
+  Future<void> get_products() async {
+    http.Response response =
+        await http.get(Uri.parse('http://35.209.150.159/getallproducts'));
+    print(response.body);
+    if (response.statusCode == 200) {
+      Map<String, dynamic> map = jsonDecode(response.body);
+      print(response.body);
+      List list = map['data'];
+      print(list);
+      setState(() {
+        for (int i = 0; i < list.length; i++) {
+          List images = list[i]['productImage'];
+        }
+      });
+    }
   }
 }
