@@ -1,39 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:grocery2/pages/location.dart';
+import 'package:grocery2/pages/signup.dart';
+import 'package:grocery2/pages/test6.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:grocery2/pages/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:grocery2/pages/home.dart';
 
 final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
-  FocusNode? _nameFocusNode;
+class _LoginScreenState extends State<LoginScreen> {
   late FocusNode _emailFocusNode;
   late FocusNode _passwordFocusNode;
   bool _rememberMe = false;
   bool _isPasswordVisible =
       false; // Add a boolean variable to track the visibility state of the password
-  final _phoneNumberController = TextEditingController();
-  final _phoneNumberFocusNode = FocusNode();
-  String? _phoneNumberErrorText;
-
-  GlobalKey<FormState> KEY = GlobalKey<FormState>();
   var email;
-  var name;
   var password;
-  var phoneNumber;
-
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController confirmPasswordController = TextEditingController();
+  var response;
+  var image;
+  bool isClosedeye = true;
+  GlobalKey<FormState> KEY = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -46,8 +41,6 @@ class _SignupScreenState extends State<SignupScreen> {
   void dispose() {
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
-    _phoneNumberController.dispose();
-    _phoneNumberFocusNode.dispose();
     super.dispose();
   }
 
@@ -56,13 +49,6 @@ class _SignupScreenState extends State<SignupScreen> {
       borderRadius: BorderRadius.circular(5.0),
       borderSide: BorderSide(color: color, width: 2.0),
     );
-  }
-
-  bool _isPhoneNumberValid(String? number) {
-    final validPrefixes = ['015', '012', '011', '010'];
-    return number != null &&
-        number.length == 11 &&
-        validPrefixes.any((prefix) => number.startsWith(prefix));
   }
 
   @override
@@ -77,7 +63,7 @@ class _SignupScreenState extends State<SignupScreen> {
               left: 0,
               right: 0,
               child: Image.asset(
-                'assets/images/womanbuy.png',
+                'assets/images/manwork.png',
                 height: 500, // Replace with your background image path
                 fit: BoxFit.cover,
               ),
@@ -86,7 +72,7 @@ class _SignupScreenState extends State<SignupScreen> {
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
-                height: 600,
+                height: 450,
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   color: Colors.white,
@@ -114,7 +100,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           fontSize: 16,
                         ),
                       ),
-                      const SizedBox(height: 15),
+                      const SizedBox(height: 25),
                       Theme(
                         data: Theme.of(context).copyWith(
                           colorScheme: Theme.of(context).colorScheme.copyWith(
@@ -123,33 +109,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                         child: TextFormField(
                           onChanged: (value) {
-                            setState(() {
-                              name = value;
-                            });
-                          },
-                          focusNode: _nameFocusNode,
-                          decoration: InputDecoration(
-                            labelText: 'Name',
-                            prefixIcon:
-                                const Icon(Icons.account_circle_outlined),
-                            focusedBorder: _border(Colors.green),
-                            enabledBorder: _border(Colors.grey),
-                          ),
-                          keyboardType: TextInputType.name,
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      Theme(
-                        data: Theme.of(context).copyWith(
-                          colorScheme: Theme.of(context).colorScheme.copyWith(
-                                primary: Colors.green,
-                              ),
-                        ),
-                        child: TextFormField(
-                          onChanged: (value) {
-                            setState(() {
-                              email = value;
-                            });
+                            email = value;
                           },
                           focusNode: _emailFocusNode,
                           decoration: InputDecoration(
@@ -161,42 +121,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           keyboardType: TextInputType.emailAddress,
                         ),
                       ),
-                      const SizedBox(height: 15),
-                      Theme(
-                        data: Theme.of(context).copyWith(
-                          colorScheme: Theme.of(context).colorScheme.copyWith(
-                                primary: Colors.green,
-                              ),
-                        ),
-                        child: TextFormField(
-                          controller: _phoneNumberController,
-                          focusNode: _phoneNumberFocusNode,
-                          keyboardType: TextInputType.phone,
-                          decoration: InputDecoration(
-                            labelText: 'Phone Number',
-                            prefixIcon: const Icon(Icons.phone),
-                            errorText: _phoneNumberErrorText,
-                            focusedBorder: _border(Colors.green),
-                            enabledBorder: _border(Colors.grey),
-                          ),
-                          onChanged: (value) {
-                            if (!_isPhoneNumberValid(value)) {
-                              setState(() {
-                                _phoneNumberErrorText =
-                                    'Enter a valid phone number (e.g., 01234567890)';
-                              });
-                            } else {
-                              setState(() {
-                                _phoneNumberErrorText = null;
-                                phoneNumber = value;
-                              });
-                            }
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
+                      const SizedBox(height: 20),
                       Theme(
                         data: Theme.of(context).copyWith(
                           colorScheme: Theme.of(context).colorScheme.copyWith(
@@ -234,7 +159,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           obscureText: !_isPasswordVisible,
                         ),
                       ),
-                      const SizedBox(height: 0), // ... Rest of your widget tree
+                      const SizedBox(height: 5), // ... Rest of your widget tree
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
@@ -268,7 +193,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         ],
                       ),
                       const SizedBox(
-                        height: 5,
+                        height: 25,
                       ),
                       Align(
                         alignment: Alignment.center,
@@ -283,16 +208,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                   50) // double.infinity is the width and 50 is the height
                               ),
                           onPressed: () {
-                            if (true) {
-                              createNewAccount(
-                                email,
-                                password,
-                                name,
-                                phoneNumber,
-                              );
-                            }
+                            setState(() {
+                              login(email, password);
+                            });
                           },
-                          child: const Text('Sign up'),
+                          child: const Text('Login'),
                         ),
                       ),
                       const SizedBox(
@@ -306,10 +226,9 @@ class _SignupScreenState extends State<SignupScreen> {
                               fontSize: 16.0, // Default font size
                             ),
                             children: <TextSpan>[
-                              const TextSpan(
-                                  text: "Already have an account ? "),
+                              const TextSpan(text: "Don't have an account? "),
                               TextSpan(
-                                text: 'Log in',
+                                text: 'Sign up',
                                 style: const TextStyle(
                                   color: Colors.green, // Color for 'Login'
                                   decoration: TextDecoration
@@ -317,6 +236,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                 ),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const SignupScreen()));
                                     // Your tap action for 'Login'
                                     //print('Login tapped');
                                   },
@@ -337,33 +261,52 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  Future<void> createNewAccount(
-      String email, String password, String name, String number) async {
-    final Map<String, dynamic> signup_data = {
-      'name': name,
+  Future<void> login(String email, String password) async {
+    final Map<String, dynamic> loginData = {
       'email': email,
       'password': password,
-      'phoneNumber': phoneNumber,
     };
     final http.Response response = await http.post(
-        Uri.parse('http://35.209.150.159/signup'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8'
-        },
-        body: jsonEncode(signup_data));
-    Map<String, dynamic> map = jsonDecode(response.body);
+      Uri.parse('http://35.209.150.159/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(loginData),
+    );
+
+    print('--------------------------------------------------------');
+    print(response.statusCode);
+    print('--------------------------------------------------------');
+    print(response.body);
+
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.green, content: Text('Account Created')));
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
-          return LoginScreen();
+          return Navigator1();
         },
       ));
+      Map<String, dynamic> map = json.decode(response.body);
+      String? message = map['message'];
+
+      String token = map['token'] ?? '';
+      print(message);
+      if (message == 'Logged in successfully') {
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) {
+            return Navigator1();
+          },
+        ));
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token);
+      }
+    } else if (response.statusCode == 401) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Wrong email or password')));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.red, content: Text('Connection Error')));
-      print(response.statusCode);
+          backgroundColor: Colors.red,
+          content: Text('${response.statusCode}')));
     }
   }
 }

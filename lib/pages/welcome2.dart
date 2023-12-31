@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grocery2/pages/login.dart';
+import 'package:grocery2/pages/signup.dart';
 
 final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
@@ -109,7 +110,11 @@ class WelcomeScreen extends StatelessWidget {
                     const SizedBox(height: 20), // Spacing between buttons
                     ElevatedButton(
                       onPressed: () {
-                        // Handle creating an account
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                const SignupScreen()));
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,

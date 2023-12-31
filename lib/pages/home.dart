@@ -181,18 +181,18 @@ class _HomePageState extends State<HomePage> {
                 scrollDirection: Axis.horizontal,
                 children: <Widget>[
                   _buildCategoryItem(
-                      'Fruits', 'assets/images/marai.png', () {}),
-                  _buildCategoryItem('Vegetables', 'assets/images/meat.png',
+                      'Marai', 'assets/images/marai.png', () {}),
+                  _buildCategoryItem('Pepsi', 'assets/images/meat.png',
                       () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => const BrandPage()));
                   }),
-                  _buildCategoryItem('Bread', 'assets/images/meat.png', () {}),
-                  _buildCategoryItem('Fruits', 'assets/images/meat.png', () {}),
-                  _buildCategoryItem('Fruits', 'assets/images/meat.png', () {}),
-                  _buildCategoryItem('Fruits', 'assets/images/meat.png', () {}),
+                  _buildCategoryItem('Juhaina', 'assets/images/meat.png', () {}),
+                  _buildCategoryItem('Fayrouz', 'assets/images/meat.png', () {}),
+                  _buildCategoryItem('Friends', 'assets/images/meat.png', () {}),
+                  _buildCategoryItem('Carrier', 'assets/images/meat.png', () {}),
                   // Add more categories here
                 ],
               ),
@@ -227,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                 children: <Widget>[
                   _buildProductItem(
                     context,
-                    'Bell Pepper Red',
+                    'Meat',
                     '1kg, £ 3.75',
                     'assets/images/meat.png',
                     () {
@@ -236,7 +236,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   _buildProductItem(
                     context,
-                    'Bell Pepper Red',
+                    'Meat',
                     '1kg, £ 3.75',
                     'assets/images/meat.png',
                     () {
@@ -245,7 +245,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   _buildProductItem(
                     context,
-                    'Bell Pepper Red',
+                    'Meat',
                     '1kg, £ 3.75',
                     'assets/images/meat.png',
                     () {

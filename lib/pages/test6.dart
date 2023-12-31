@@ -1,4 +1,5 @@
 import 'package:grocery2/pages/test4.dart';
+import 'package:grocery2/pages/test5.dart';
 import 'package:grocery2/pages/test7.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery2/pages/home.dart';
@@ -24,7 +25,7 @@ class _Navigator1State extends State<Navigator1> {
     const HomePage(),
     FindProductsPage(),
     const AccountPage(),
-    const CartPage(),
+    const CartScreen(),
     // Add more pages as necessary
   ];
 

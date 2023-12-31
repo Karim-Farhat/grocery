@@ -1,8 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:grocery2/pages/test6.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:grocery2/pages/login.dart';
 
-class LocationPage extends StatelessWidget {
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Grocery Delivery',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+      ),
+      home: const LocationPage(),
+    );
+  }
+}
+
+class LocationPage extends StatefulWidget {
   const LocationPage({super.key});
+
+  @override
+  State<LocationPage> createState() => _LocationPageState();
+}
+
+class _LocationPageState extends State<LocationPage> {
+  GlobalKey<FormState> KEY = GlobalKey<FormState>();
+  var email;
+  var date;
+  var address;
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +85,16 @@ class LocationPage extends StatelessWidget {
                         primary: Colors.green,
                       ),
                 ),
-                child: const TextField(
+                child: TextField(
                   decoration: InputDecoration(
-                    labelText: 'Government',
+                    labelText: 'Address',
                     //hintText: 'Address',
                   ),
+                  onChanged: (value) {
+                    setState(() {
+                      address = value;
+                    });
+                  },
                 ),
               ),
               const SizedBox(height: 20.0), // For spacing
@@ -62,11 +104,14 @@ class LocationPage extends StatelessWidget {
                         primary: Colors.green,
                       ),
                 ),
-                child: const TextField(
+                child: TextField(
                   decoration: InputDecoration(
-                    labelText: 'Town',
-                    //hintText: 'Address',
+                    labelText: 'Birth of date',
+                    //hintText: 'fdmvdfv',
                   ),
+                  onChanged: (value) {
+                    date = value.toString();
+                  },
                 ),
               ),
               const SizedBox(height: 20.0),
@@ -76,15 +121,20 @@ class LocationPage extends StatelessWidget {
                         primary: Colors.green,
                       ),
                 ),
-                child: const TextField(
+                child: TextField(
                   decoration: InputDecoration(
-                    labelText: 'Address',
+                    labelText: 'Confirm your mail',
                     //hintText: 'Types of your area',
                   ),
+                  onChanged: (value) {
+                    setState(() {
+                      email = value;
+                    });
+                  },
                 ),
               ),
               const SizedBox(
-                  height: 10), // Use Spacer to push the button to the bottom
+                  height: 100), // Use Spacer to push the button to the bottom
               Align(
                 alignment: Alignment.center,
                 child: ElevatedButton(
@@ -98,11 +148,9 @@ class LocationPage extends StatelessWidget {
                           50) // double.infinity is the width and 50 is the height
                       ),
                   onPressed: () {
-                    print('dcjndsjcnjskdc');
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const Navigator1()));
+                    if (true) {
+                      takeAddress(email, date, address);
+                    }
                     // handle login logic
                   },
                   child: const Text('Submit'),
@@ -116,5 +164,33 @@ class LocationPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> takeAddress(String email, String date, String address) async {
+    final Map<String, dynamic> signup_data = {
+      'email': email,
+      'birthDate': date,
+      'address': address,
+    };
+    final http.Response response = await http.post(
+        Uri.parse('http://35.209.150.159/complete-signup'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        body: jsonEncode(signup_data));
+    Map<String, dynamic> map = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.green, content: Text('Account Created')));
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) {
+          return LoginScreen();
+        },
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.red, content: Text('${response.statusCode}')));
+      print(response.statusCode);
+    }
   }
 }

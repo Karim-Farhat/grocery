@@ -19,9 +19,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class GroceryHomePage extends StatelessWidget {
+class GroceryHomePage extends StatefulWidget {
   const GroceryHomePage({super.key});
 
+  @override
+  State<GroceryHomePage> createState() => _GroceryHomePageState();
+}
+
+class _GroceryHomePageState extends State<GroceryHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

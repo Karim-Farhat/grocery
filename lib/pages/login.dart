@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grocery2/pages/signup.dart';
+import 'package:grocery2/pages/test6.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:grocery2/pages/home.dart';
+import 'signup.dart';
 
 final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
@@ -18,6 +24,12 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _rememberMe = false;
   bool _isPasswordVisible =
       false; // Add a boolean variable to track the visibility state of the password
+  var email;
+  var password;
+  var response;
+  var image;
+  bool isClosedeye = true;
+  GlobalKey<FormState> KEY = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -97,6 +109,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                         ),
                         child: TextFormField(
+                          onChanged: (value) {
+                            email = value;
+                          },
                           focusNode: _emailFocusNode,
                           decoration: InputDecoration(
                             labelText: 'Email Address',
@@ -115,6 +130,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                         ),
                         child: TextFormField(
+                          onChanged: (value) {
+                            setState(() {
+                              password = value;
+                            });
+                          },
                           focusNode: _passwordFocusNode,
                           decoration: InputDecoration(
                             labelText: 'Password',
@@ -189,7 +209,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   50) // double.infinity is the width and 50 is the height
                               ),
                           onPressed: () {
-                            // handle login logic
+                            setState(() {
+                              login(email, password);
+                            });
                           },
                           child: const Text('Login'),
                         ),
@@ -238,5 +260,55 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> login(String email, String password) async {
+    final Map<String, dynamic> loginData = {
+      'email': email,
+      'password': password,
+    };
+    final http.Response response = await http.post(
+      Uri.parse('http://35.209.150.159/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(loginData),
+    );
+
+    print('--------------------------------------------------------');
+    print(response.statusCode);
+    print('--------------------------------------------------------');
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) {
+          return Navigator1();
+        },
+      ));
+      Map<String, dynamic> map = json.decode(response.body);
+      Map? map2 = map['data'];
+
+
+      String token = map2!['token'] ?? '';
+
+      if (true) {
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) {
+            return Navigator1();
+          },
+        ));
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token);
+      }
+    } else if (response.statusCode == 401) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Wrong email or password')));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('${response.statusCode}')));
+    }
   }
 }
